@@ -1,0 +1,169 @@
+<html>
+    <head>
+        <title>RI3D at MTU Control</title>
+        <link rel="stylesheet" type="text/css" href="../css/control.css">
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    </head>
+    <body>
+        <div class="middle-container" id="container">
+            <div class="flex-center">
+                <span class="title bold">RI3D Stream Controller</span>
+            </div>
+
+            <div class="options">
+                <div class="flex-apart">
+                    <span class="bold">Time Target</span>
+                    <input type="datetime-local" id="time-target" onchange="triggerUpdate('time-target', this)" class="input" value="0">
+                </div>
+                <div class="flex-apart">
+                    <span class="bold">Build Stage</span>
+                    <input type="text" id="build-stage" onchange="triggerUpdate('build-stage', this)" class="input" maxlength="40">
+                </div>
+                <div class="flex-apart">
+                    <span class="bold">Stream View</span>
+                    <div id="stream-view" class="flex-center">
+                        <button onclick="triggerUpdate('stream-view', this)" name="timer" class="selected">Timer</button>
+                        <button onclick="triggerUpdate('stream-view', this)" name="away" class="">Away</button>
+                        <button onclick="triggerUpdate('stream-view', this)" name="hide" class="">Hide</button>
+                    </div>
+                </div>
+                <div class="flex-apart">
+                    <span class="bold">Data Name</span>
+                    <div class="ping">Recent</div>
+                    <input id="data-name" type="text" onchange="triggerUpdate('data-name', this)" class="input" maxlength="40">
+                </div>
+                <div class="flex-apart">
+                    <span class="bold">Data Segment</span>
+                    <div class="flex-center" id="data-segment">
+                        <button onclick="triggerUpdate('data-segment', this)" name="hidden" class="selected">Hidden</button>
+                        <button onclick="triggerUpdate('data-segment', this)" name="timer" class="">Timer</button>
+                        <button onclick="triggerUpdate('data-segment', this)" name="counter" class="">Counter</button>
+                        <button onclick="triggerUpdate('data-segment', this)" name="points" class="">Points</button>
+                    </div>
+                </div>
+                <div class="flex-apart">
+                    <span class="bold">Scrolling Text</span>
+                    <textarea id="scrolling-text"  onchange="triggerUpdate('scrolling-text', this)"></textarea>
+                </div>
+            </div>
+            <div class="flex-apart">
+                <div></div>
+                <div class="flex-center">
+                    <span id="not-saved" style="margin-right:10px"><i>Changes Not Saved</i></span>
+                    <button class="selected" onclick="publishToStream()">Publish to Stream</button>
+                </div>
+            </div>
+        </div>
+        <script>
+
+            const socket = io();
+
+            let saved_data_obj = {
+                time_target: "2021-01-01T00:00",
+                build_stage: "Build Stage",
+                stream_view: "Timer",
+                data_name: "Data Name",
+                data_segment: "Hidden",
+                scrolling_text: "Scrolling Text"
+            }
+
+            let data_obj = {
+                time_target: "2021-01-01T00:00",
+                build_stage: "Build Stage",
+                stream_view: "Timer",
+                data_name: "Data Name",
+                data_segment: "Hidden",
+                scrolling_text: "Scrolling Text"
+            }
+
+            function publishToStream(){
+                console.log("Publishing to Stream");
+                socket.emit('new-stream-state', data_obj);
+
+                saved_data_obj = data_obj;
+
+                document.getElementById("not-saved").style.display = "none";
+            }
+
+            function triggerUpdate(name, ref){
+
+                let button_div = null;
+                let buttons = null;
+
+                switch(name){
+                    case "time-target":
+                        data_obj.time_target = document.getElementById(name).value;
+                        break;
+                    case "build-stage":
+                        data_obj.build_stage = document.getElementById(name).value;
+                        break;
+                    case "stream-view":
+                        // data_obj.stream_view = document.getElementById(name).value;
+
+                        button_div = document.getElementById(name);
+                        buttons = button_div.getElementsByTagName("button");
+
+                        for(let i = 0; i < buttons.length; i++){
+                            if(buttons[i].classList.contains("selected")){
+                                buttons[i].classList.remove("selected");
+                            }
+                        }
+
+                        ref.classList.add("selected");
+
+                        data_obj.stream_view = ref.getAttribute("name");
+
+                        break;
+                    case "data-name":
+                        data_obj.data_name = document.getElementById(name).value;
+                        break;
+                    case "data-segment":
+                        // data_obj.data_segment = document.getElementById(name).value;
+
+                        button_div = document.getElementById(name);
+                        buttons = button_div.getElementsByTagName("button");
+
+                        for(let i = 0; i < buttons.length; i++){
+                            if(buttons[i].classList.contains("selected")){
+                                buttons[i].classList.remove("selected");
+                            }
+                        }
+
+                        ref.classList.add("selected");
+
+                        data_obj.data_segment = ref.getAttribute("name");
+
+
+                        break;
+                    case "scrolling-text":
+                        data_obj.scrolling_text = document.getElementById(name).value;
+                        break;
+                }
+
+                document.getElementById("not-saved").style.display = "";
+            }
+
+            
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+
+                document.getElementById("container").classList.add("connected");
+                document.getElementById("container").classList.remove("disconnected");
+                
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+
+                document.getElementById("container").classList.add("disconnected");
+                document.getElementById("container").classList.remove("connected");
+            });
+
+            socket.on('stream-state', (data) => {
+                console.log('Stream State:', data);
+            });
+
+        </script>
+    </body>
+</html>

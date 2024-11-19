@@ -1,0 +1,28 @@
+{
+  "name": "ri3d-live",
+  "version": "1.0.0",
+  "description": "An application to manage the live view of the Robot in 3 Days application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Daviad0/RI3D-Live.git"
+  },
+  "keywords": [
+    "robot",
+    "RI3D",
+    "first"
+  ],
+  "author": "David Reeves",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Daviad0/RI3D-Live/issues"
+  },
+  "homepage": "https://github.com/Daviad0/RI3D-Live#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1"
+  }
+}
