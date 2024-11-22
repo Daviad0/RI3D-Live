@@ -3,19 +3,19 @@
         <style>
             @font-face {
                 font-family: 'Cooper Hewitt';
-                src: url('CooperHewitt-Bold.ttf');
+                src: url('public/CooperHewitt-Bold.ttf');
             }
 
             @font-face {
                 font-family: 'Avenir Next';
                 font-weight: 500;
-                src: url('AvenirNextLTPro-Regular.otf');
+                src: url('public/AvenirNextLTPro-Regular.otf');
             }
 
             @font-face {
                 font-family: 'Avenir Next';
                 font-weight: 700;
-                src: url('AvenirNextLTPro-Bold.otf');
+                src: url('public/AvenirNextLTPro-Bold.otf');
             }
 
             *{
@@ -157,6 +157,11 @@
                 margin-top:20px;
             }
 
+            .ccr-logo{
+                width: 300px;
+                margin: 15px;
+            }
+
             .data-segment{
                 width: 27%;
                 height: 5%;
@@ -171,6 +176,8 @@
                 
 
                 text-align: center;
+
+                transition: all 0.5s ease;
             }
 
             .scrolling-data{
@@ -184,6 +191,9 @@
                 justify-content: center;
                 align-items: center;
             }
+
+       
+
 
             .scrolling-data span{
                 color: white;
@@ -221,7 +231,7 @@
             }
 
             .full-screen-logos{
-                background-color: #ffcd00;
+                background-image: url('public/BackgroundControl.png');
                 height: 100%;
                 width: 100%;
                 position: absolute;
@@ -233,36 +243,54 @@
                 align-items: center;
             }
 
+            .full-screen-container{
+                background-color: white;
+                padding: 10px 80px;
+                border-radius: 60px;
+            }
+
             .full-screen-logos img{
                 width: 400px;
                 margin: 40px;
             }
+
+            .expand-support{
+                position: absolute;
+                overflow: hidden;
+                transition: all 0.75s ease;
+                opacity: 0;
+            }
+
+            .expand-support.expanded{
+                opacity: 1;
+            }
+
+           
 
         </style>
 
         <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     </head>
 
-    <img src="WaitingImage.jpg" class="full-screen-image" style="opacity: 0;"> 
+    <img src="public/BackgroundControl.png" class="full-screen-image" style="opacity: 0;"> 
         <div class="top-waiting-bar" style="opacity: 0;">
             <div>
                 <span style="color:white; font-size: 3em;"><strong>Robot in 3 Days at Michigan Tech</strong> is currently on break!</span>
                 <span style="color:white; font-size: 5em;font-weight:700;margin-top: 30px" id="time-break"></span>
             </div>
         </div>
-        <img src="WaitingImage.jpg" class="full-screen-image" style="opacity: 0;"> 
-        <img src="TopBar.png" class="top-bar-image">
+        <img src="public/TopBar.png" class="top-bar-image">
         <!-- <span class="top-bar-mtu-apply">mtu.edu/apply</span> -->
         
-        <img src="RI3DClockOnly.png" id="clock-image" class="clock-image">
+        <img src="public/RI3DClockOnly.png" id="clock-image" class="clock-image">
         <!-- <img src="Clock.png" class="timer-sprawl"> -->
         <!-- <div class="time-left-container">
             <span class="time-left" id="time-left">00:00:00</span>
             <span class="time-left-label">Remaining</span>
         </div> -->
-        <img src="DataBar.png" class="bottom-bar-image data-bar"/>
-        <img src="BottomBar.png" id="bottom-bar" class="bottom-bar-image"/>
-        <img src="FullName_Horizontal_OneColor_White.png" class="bottom-bar-mtu-logo">
+        <img src="public/DataBar.png" class="bottom-bar-image data-bar" id="data-segment-bar"/>
+        <img src="public/BottomBar.png" id="bottom-bar" class="bottom-bar-image"/>
+        <img src="public/FullName_Horizontal_OneColor_White.png" class="bottom-bar-mtu-logo">
         
         <div class="timer-block">
             <div>
@@ -272,29 +300,45 @@
             
         </div>
         <div class="gracious-support">
-            <div>
+            <div class="expand-support expanded" id="sponsors">
                 <span style="color:white; font-size: 2em;margin-top:20px;text-decoration: underline;">Graciously Supported By</span>
                 <div class="flex-center">
-                    <img src="computing[mtu]-white.png" class="college-logo">
-                    <img src="MTUeng_white.png" class="college-logo">
+                    <img src="public/computing[mtu]-white.png" class="college-logo">
+                    <img src="public/MTUeng_white.png" class="college-logo">
                 </div>
+            </div>
+
+            <div class="expand-support" id="hosts">
+                <img src="public/CCRAtMTU.png" class="ccr-logo">
+            </div>
+
+            <div class="expand-support" id="build-stage">
+                <span style="color:white;font-size:3em">Build Stage: Build</span>
             </div>
             
         </div>
-        <div class="data-segment">
-            <span>Shots Scored: 0</span>
+        <div class="data-segment" id="data-segment-info">
+            <span>Scots Scored: 0</span>
         </div>
 
 
         <div class="scrolling-data">
             <marquee behavior="scroll" direction="left">
-                <span>This is a testing piece of text.</span>
+                <span id="scrolling-text">This is a testing piece of text.</span>
             </marquee>
         </div>
 
+
+        <!-- <div class="build-stage">
+            <span>Build Stage: Build</span>
+        </div> -->
+
         <div class="full-screen-logos" style="opacity: 0;">
-            <img src="FullName_Horizontal_OneColor_Black.png"/>
-            <img src="RI3DClockOnly.png"/>
+            <div class="flex-center full-screen-container">
+                <img src="public/FullName_Horizontal_OneColor_Black.png"/>
+                <img src="public/RI3DClockOnly.png"/>
+            </div>
+            
         </div>
         <script>
 
@@ -302,6 +346,15 @@
 
             let stream_state = {};
 
+            let current_support_panel = "sponsors";
+
+            let data_segment_name = "Scots Scored:";
+
+            let data = {
+                counter: 0,
+                timer: "0:00",
+                points: 0
+            }
 
 
             // stages = camera, away, full-screen
@@ -323,6 +376,29 @@
             let full_screen_specific_classes = [
                 "full-screen-logos"
             ]
+
+            function changeStage(){
+                if(current_support_panel == "sponsors"){
+                    document.getElementById('sponsors').classList.remove('expanded');
+                    document.getElementById('hosts').classList.add('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "hosts";
+                }else if(current_support_panel == "hosts"){
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('sponsors').classList.add('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "build-stage";
+                }else if(current_support_panel == "build-stage"){
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('sponsors').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.add('expanded');
+                    current_support_panel = "sponsors";
+                }
+            }
+
+            setInterval(() => {
+                changeStage();
+            }, 8000);
 
 
             function setStage(newStage){
@@ -377,7 +453,17 @@
             }
 
             function updateTimeLeft(){
-                let targetDate = new Date("11/12/2024 12:00");
+
+                let streamTimeTarget = stream_state["time_target"];
+                let defaultTimeTarget = "11/12/2024 12:00";
+
+                let targetDate = new Date(defaultTimeTarget);
+
+                if(streamTimeTarget){
+                    targetDate = new Date(streamTimeTarget);
+                }
+
+                
                 let now = new Date();
 
                 let timeLeft = targetDate - now;
@@ -427,7 +513,57 @@
                 }else if(stream_view == "hide"){
                     setStage("full-screen");
                 }
+
+                let scrolling_text = stream_state["scrolling_text"];
+                document.getElementById('scrolling-text').innerText = scrolling_text;
+
+                
+
+                let data_name = stream_state["data_name"];
+                data_segment_name = data_name;
+
+                let build_stage = stream_state["build_stage"];
+                document.getElementById('build-stage').getElementsByTagName('span')[0].innerText = `Build Stage: ${build_stage}`;
+
+
             }
+
+            function updateDataSegment(){
+                let data_segment_elem = document.getElementById('data-segment-info');
+                let use_data = null;
+
+                let data_segment = stream_state["data_segment"].toLowerCase();
+                if(data_segment == "hidden"){
+                    document.getElementById('data-segment-info').style.opacity = 0;
+                    document.getElementById('data-segment-bar').style.opacity = 0;
+                }else if(data_segment == "timer"){
+                    document.getElementById('data-segment-info').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    document.getElementById('data-segment-bar').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    use_data = data["timer"];
+
+                }else if(data_segment == "counter"){
+                    document.getElementById('data-segment-info').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    document.getElementById('data-segment-bar').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    use_data = data["counter"];
+
+                }else if(data_segment == "points"){
+                    document.getElementById('data-segment-info').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    document.getElementById('data-segment-bar').style.opacity = stream_state["stream_view"] == "timer" ? 1 : 0;
+                    use_data = data["points"] + "pts";
+
+                }
+
+                if(use_data != null){
+                    data_segment_elem.getElementsByTagName('span')[0].innerText = `${data_segment_name} ${use_data}`;
+                }
+
+
+                
+            }
+
+            setInterval(() => {
+                updateDataSegment();
+            }, 300);
 
             socket.on('connect', () => {
                 console.log("Connected to server");
@@ -436,6 +572,10 @@
             socket.on('stream-state', (data) => {
                 stream_state = data;
                 handleStreamStateData();
+            });
+
+            socket.on('data-state', (dataPassed) => {
+                data = dataPassed;
             });
         </script>
     </body>

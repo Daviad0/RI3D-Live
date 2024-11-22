@@ -2,9 +2,11 @@
     <head>
         <title>Data Control at RI3D at MTU</title>
         <link rel="stylesheet" type="text/css" href="../css/control.css">
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
     </head>
     <body>
-        <div class="middle-container connected">
+        <div class="middle-container connected" id="container">
             <div class="flex-center">
                 <span class="title bold">RI3D Data Controller</span>
             </div>
@@ -16,46 +18,212 @@
                 <div class="flex-center">
                     <span>This is the current setting set on the controller...</span>
                 </div>
-                <div class="flex-center">
-                    <button class="selected">Hidden</button>
-                    <button class="">Timer</button>
-                    <button class="">Counter</button>
-                    <button class="">Points</button>
+                <div class="flex-center" id="data-segment">
+                    <button name="hidden" class="selected">Hidden</button>
+                    <button name="timer" class="">Timer</button>
+                    <button name="counter" class="">Counter</button>
+                    <button name="points" class="">Points</button>
                 </div>
                 
             </div>
             <br/>
-            <div class="flex-apart">
+            <div class="flex-apart not-active" id="data-timer">
                 <span class="bold">Timer</span>
                 <div class="flex-center">
-                    <button class="">Reset to 0:00</button>
-                    <span class="bold title selec" style="margin:0px 15px">0:00</span>
-                    <button class="">Start</button>
-                    <button class="selected">Stop</button>
+                    <button id="timer-reset"  onclick="setTimerState('reset')" class="">Reset to 0:00</button>
+                    <span class="bold title" id="timer-time" style="margin:0px 15px">0:00</span>
+                    <button id="timer-start" onclick="setTimerState('start')" class="">Start</button>
+                    <button id="timer-stop"  onclick="setTimerState('stop')" class="selected">Stop</button>
                 </div>
             </div>
             <br/>
 
-            <div class="flex-apart">
+            <div class="flex-apart not-active" id="data-counter">
                 <span class="bold">Counter</span>
                 <div class="flex-center">
-                    <button class="">Zero</button>
-                    <input type="number" class="input" value="0">
-                    <button class="">Add 1</button>
-                    <button class="">Remove 1</button>
+                    <button onclick="setCounterState('zero')" class="">Zero</button>
+                    <input onchange="setCounterState('set')" type="number" class="input" id="counter-count" value="0">
+                    <button onclick="setCounterState('add')" class="">Add 1</button>
+                    <button onclick="setCounterState('remove')" class="">Remove 1</button>
                 </div>
             </div>
             <br/>
-            <div class="flex-apart not-active">
+            <div class="flex-apart not-active" id="data-points">
                 <span class="bold">Points</span>
                 <div class="flex-center">
-                    <button class="">Undo</button>
-                    <input type="number" class="input" value="0">
-                    <button class="">Point #1</button>
-                    <button class="">Point #2</button>
-                    <button class="">Point #3</button>
+                    <button onclick="setPointsState('undo')" class="" id="points-undo">Undo</button>
+                    <button onclick="setPointsState('zero')" class="">Zero</button>
+                    <input onchange="setPointsState('set')" type="number" class="input" id="points-count" value="0">
+                    <button onclick="setPointsState(5)" class="">5 pts</button>
+                    <button onclick="setPointsState(10)" class="">10 pts</button>
+                    <button onclick="setPointsState(15)" class="">15 pts</button>
                 </div>
             </div>
         </div>
+        <script>
+            const socket = io();
+
+            let timerState = {
+                running: false,
+                time: 0,
+                lastCheck: 0
+            }
+
+            let counterState = 0;
+            let pointsState = 0;
+            let latestPoints = [];
+
+            function handleTimer(){
+                if(timerState.running){
+                    timerState.time += Date.now() - timerState.lastCheck;
+                    timerState.lastCheck = Date.now();
+                }
+
+                let minutes = timerState.time / 60000;
+                let seconds = (timerState.time % 60000) / 1000;
+                minutes = Math.floor(minutes);
+                seconds = Math.floor(seconds);
+
+                document.getElementById('timer-time').innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            function setTimerState(state){
+                if(state == "start"){
+                    timerState.running = true;
+                    timerState.lastCheck = Date.now();
+
+                    document.getElementById('timer-start').classList.add('selected');
+                    document.getElementById('timer-stop').classList.remove('selected');
+                } else if(state == "stop"){
+                    timerState.running = false;
+
+                    document.getElementById('timer-start').classList.remove('selected');
+                    document.getElementById('timer-stop').classList.add('selected');
+                } else if(state == "reset"){
+                    timerState.time = 0;
+                }
+            }
+
+            function setCounterState(state){
+                if(state == "zero"){
+                    counterState = 0;
+                } else if(state == "add"){
+                    counterState++;
+                } else if(state == "remove"){
+                    counterState--;
+                } else if(state == "set"){
+                    counterState = document.getElementById('counter-count').value;
+                }
+
+                document.getElementById('counter-count').value = counterState;
+            }
+
+            function setPointsState(state){
+                if(state == "zero"){
+                    pointsState = 0;
+                    latestPoints = [];
+                } else if(state == "set"){
+                    counterState = document.getElementById('counter-count').value;
+                }else if(state == "undo"){
+                    if(latestPoints.length > 0){
+                        // remove points equal to last point
+                        pointsState -= latestPoints.pop();
+                    }
+                }
+                 else{
+                    // add points equal to state
+
+                    pointsState += state;
+                    latestPoints.push(state);
+
+                    
+
+
+                }
+
+                if(latestPoints.length > 0){
+                    document.getElementById('points-undo').classList.add('selected');
+                } else {
+                    document.getElementById('points-undo').classList.remove('selected');
+                }
+
+                document.getElementById('points-count').value = counterState;
+            }
+
+            setInterval(handleTimer, 100);
+
+
+            function publishData(){
+                let new_data = {
+                    timer: document.getElementById('timer-time').innerText,
+                    counter: counterState,
+                    points: pointsState
+                };
+
+                socket.emit('new-data-state', new_data);
+            }
+
+            setInterval(publishData, 300);
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+
+                document.getElementById("container").classList.add("connected");
+                document.getElementById("container").classList.remove("disconnected");
+                
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+
+                document.getElementById("container").classList.add("disconnected");
+                document.getElementById("container").classList.remove("connected");
+            });
+            
+            socket.on('stream-state', (data) => {
+                console.log(data);
+
+                let data_segment = data.data_segment;
+
+                let buttons = document.getElementById('data-segment').getElementsByTagName('button');
+
+                for(let i = 0; i < buttons.length; i++){
+                    if(buttons[i].classList.contains('selected')){
+                        buttons[i].classList.remove('selected');
+                    }
+
+                    if(buttons[i].getAttribute('name') == data_segment){
+                        buttons[i].classList.add('selected');
+                    }
+                }
+
+                document.getElementById('data-timer').classList.add('not-active');
+                document.getElementById('data-counter').classList.add('not-active');
+                document.getElementById('data-points').classList.add('not-active');
+
+                if(data_segment == "timer"){
+                    document.getElementById('data-timer').classList.remove('not-active');
+                } else if(data_segment == "counter"){
+                    document.getElementById('data-counter').classList.remove('not-active');
+                } else if(data_segment == "points"){
+                    document.getElementById('data-points').classList.remove('not-active');
+                }
+
+            });
+
+            socket.on('data-state', (data) => {
+                
+                let counter = data.counter;
+                let points = data.points;
+
+                counterState = counter;
+                pointsState = points;
+
+                document.getElementById('counter-count').value = counter;
+                document.getElementById('points-count').value = points;
+
+
+            });
+        </script>
     </body>
 </html>

@@ -39,10 +39,17 @@ let streamState = {
     scrolling_text: "Scrolling Text"
 }
 
+let dataState = {
+    counter: 28,
+    points: 0,
+    timer: "0:00"
+}
+
 
 io.on('connection', (socket) => {
 
     socket.emit('stream-state', streamState);
+    socket.emit('data-state', dataState);
 
     console.log('New connection');
     socket.on('control', (data) => {
@@ -54,6 +61,11 @@ io.on('connection', (socket) => {
     socket.on('new-stream-state', (data) => {
         streamState = data;
         io.emit('stream-state', streamState);
+    });
+
+    socket.on('new-data-state', (data) => {
+        dataState = data;
+        io.emit('data-state', dataState);
     });
 });
 

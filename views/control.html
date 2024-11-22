@@ -161,6 +161,46 @@
             });
 
             socket.on('stream-state', (data) => {
+
+                saved_data_obj = data;
+                data_obj = data;
+
+                document.getElementById("time-target").value = data.time_target;
+                document.getElementById("build-stage").value = data.build_stage;
+
+                let button_div = document.getElementById("stream-view");
+                let buttons = button_div.getElementsByTagName("button");
+
+                for(let i = 0; i < buttons.length; i++){
+                    if(buttons[i].classList.contains("selected")){
+                        buttons[i].classList.remove("selected");
+                    }
+
+                    if(buttons[i].getAttribute("name") == data.stream_view){
+                        buttons[i].classList.add("selected");
+                    }
+                }
+
+                document.getElementById("data-name").value = data.data_name;
+
+                button_div = document.getElementById("data-segment");
+                buttons = button_div.getElementsByTagName("button");
+                for(let i = 0; i < buttons.length; i++){
+                    if(buttons[i].classList.contains("selected")){
+                        buttons[i].classList.remove("selected");
+                    }
+
+                    if(buttons[i].getAttribute("name") == data.data_segment){
+                        buttons[i].classList.add("selected");
+                    }
+                }
+
+                document.getElementById("scrolling-text").value = data.scrolling_text;
+
+
+                document.getElementById("not-saved").style.display = "none";
+
+
                 console.log('Stream State:', data);
             });
 
