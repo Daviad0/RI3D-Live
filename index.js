@@ -14,19 +14,21 @@ const server = require('http').createServer(app);
 
 const io = socketio(server);
 
-app.use('/public', express.static('public'));
-app.use('/css', express.static('css'));
-app.use('/js', express.static('js'));
+const route = process.env.ROUTE || '';
 
-app.get('/control', (req, res) => {
+app.use(route + '/public', express.static('public'));
+app.use(route + '/css', express.static('css'));
+app.use(route + '/js', express.static('js'));
+
+app.get(route + '/control', (req, res) => {
     res.sendFile(__dirname + '/views/control.html');
 });
 
-app.get('/data-control', (req, res) => {
+app.get(route + '/data-control', (req, res) => {
     res.sendFile(__dirname + '/views/data-control.html');
 });
 
-app.get('/stream', (req, res) => {
+app.get(route + '/stream', (req, res) => {
     res.sendFile(__dirname + '/views/stream.html');
 });
 
