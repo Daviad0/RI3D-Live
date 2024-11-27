@@ -265,7 +265,32 @@
                 opacity: 1;
             }
 
+            .ad{
+
+            }
+
+            .ad .statement{
+                position: absolute;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+
+                font-size: 3em;
+                color: black;
+                font-weight: bold;
+            }
            
+            .ad video{
+                position: absolute;
+                top: 5%;
+                left: 5%;
+                width: 90%;
+
+                border-radius: 20px;
+
+                transition: all 0.5s ease;
+
+            }
 
         </style>
 
@@ -292,6 +317,8 @@
         <img src="public/BottomBar.png" id="bottom-bar" class="bottom-bar-image"/>
         <img src="public/FullName_Horizontal_OneColor_White.png" class="bottom-bar-mtu-logo">
         
+        
+
         <div class="timer-block">
             <div>
                 <span class="time" id="time">00:00:00</span>
@@ -340,9 +367,14 @@
             </div>
             
         </div>
+
+        <div id="ad-view" class="ad">
+            <span class="statement">We'll Be Right Back...</span>
+            <video src="" onended="onVideoEnd()" id="ad-video" autoplay muted></video>
+        </div>
         <script>
 
-            const socket = io();
+            const socket = io('', {path: '/live/socket.io'});
 
             let stream_state = {};
 
@@ -356,6 +388,10 @@
                 points: 0
             }
 
+            let advertisements = [
+                "public/videos/Austin 30 Broadcast_1.mp4"
+            ]
+
 
             // stages = camera, away, full-screen
 
@@ -365,16 +401,28 @@
                 "data-segment",
                 "data-bar",
                 "top-bar-image",
-                "timer-block"
+                "timer-block",
+                "bottom-bar-mtu-logo",
+                "gracious-support",
+                "scrolling-data"
             ]
 
             let away_specific_classes = [
                 "full-screen-image",
-                "top-waiting-bar"
+                "top-waiting-bar",
+                "bottom-bar-image",
+                "bottom-bar-mtu-logo",
+                "gracious-support",
+                "scrolling-data"
             ]
 
             let full_screen_specific_classes = [
                 "full-screen-logos"
+            ]
+
+            let ad_specific_classes = [
+                "ad",
+                "full-screen-image"
             ]
 
             function changeStage(){
@@ -404,9 +452,7 @@
             function setStage(newStage){
                 stage = newStage;
                 if(stage == "camera"){
-                    camera_specific_classes.forEach((className) => {
-                        document.getElementsByClassName(className)[0].style.opacity = 1;
-                    });
+                    
 
                     away_specific_classes.forEach((className) => {
                         document.getElementsByClassName(className)[0].style.opacity = 0;
@@ -415,6 +461,14 @@
                     full_screen_specific_classes.forEach((className) => {
                         document.getElementsByClassName(className)[0].style.opacity = 0;
                     })
+
+                    ad_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    camera_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 1;
+                    });
 
                     document.getElementById('bottom-bar').style.opacity = 1;
                     document.getElementById('clock-image').style.opacity = 1;
@@ -423,12 +477,18 @@
                         document.getElementsByClassName(className)[0].style.opacity = 0;
                     })
 
-                    away_specific_classes.forEach((className) => {
-                        document.getElementsByClassName(className)[0].style.opacity = 1;
-                    })
+                    
 
                     full_screen_specific_classes.forEach((className) => {
                         document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    ad_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    away_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 1;
                     })
 
                     document.getElementById('bottom-bar').style.opacity = 0.7;
@@ -443,13 +503,65 @@
                         document.getElementsByClassName(className)[0].style.opacity = 0;
                     })
 
+                    
+
+                    ad_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
                     full_screen_specific_classes.forEach((className) => {
                         document.getElementsByClassName(className)[0].style.opacity = 1;
                     })
 
                     document.getElementById('bottom-bar').style.opacity = 0;
                     document.getElementById('clock-image').style.opacity = 0;
+                }else if(stage == "ad"){
+                    camera_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    away_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    full_screen_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 0;
+                    })
+
+                    ad_specific_classes.forEach((className) => {
+                        document.getElementsByClassName(className)[0].style.opacity = 1;
+                    })
+
+                    document.getElementById('bottom-bar').style.opacity = 0;
+                    document.getElementById('clock-image').style.opacity = 0;
+
+                    setTimeout(() => {
+                        chooseNewVideo();
+                    }, 1000);
+
+
                 }
+            }
+
+            function onVideoEnd(){
+                setStage("full-screen");
+
+                stream_state["stream_view"] = "hide";
+
+                socket.emit('new-stream-state', stream_state);
+
+                let videoElem = document.getElementById('ad-video');
+                videoElem.src = "";
+                videoElem.removeEventListener('ended', onVideoEnd);
+            }
+
+            function chooseNewVideo(){
+                let randomIndex = Math.floor(Math.random() * advertisements.length);
+                let newAd = advertisements[randomIndex];
+
+                document.getElementById('ad-video').src = newAd;
+
+                
             }
 
             function updateTimeLeft(){
@@ -499,6 +611,8 @@
                     setStage("away");
                 }else if(event.key == "3"){
                     setStage("full-screen");
+                }else if(event.key == "4"){
+                    setStage("ad");
                 }
             });
 
@@ -512,6 +626,8 @@
                     setStage("away");
                 }else if(stream_view == "hide"){
                     setStage("full-screen");
+                }else if(stream_view == "ad"){
+                    setStage("ad");
                 }
 
                 let scrolling_text = stream_state["scrolling_text"];

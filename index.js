@@ -12,9 +12,9 @@ const socketio = require('socket.io');
 const app = express();
 const server = require('http').createServer(app);
 
-const io = socketio(server);
+const io = socketio(server, {path: '/live/socket.io'});
 
-const route = process.env.ROUTE || '';
+const route = process.env.ROUTE || '/live';
 
 app.use(route + '/public', express.static('public'));
 app.use(route + '/css', express.static('css'));
