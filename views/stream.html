@@ -279,12 +279,20 @@
                 color: black;
                 font-weight: bold;
             }
+
+            .ad .time{
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                font-size: 2em;
+                color: black;
+            }
            
             .ad video{
                 position: absolute;
                 top: 5%;
-                left: 5%;
-                width: 90%;
+                left: 10%;
+                width: 80%;
 
                 border-radius: 20px;
 
@@ -369,8 +377,9 @@
         </div>
 
         <div id="ad-view" class="ad">
+            <span class="time" id="ad-time">0s</span>
             <span class="statement">We'll Be Right Back...</span>
-            <video src="" onended="onVideoEnd()" id="ad-video" autoplay muted></video>
+            <video src="" onended="onVideoEnd()" id="ad-video" autoplay></video>
         </div>
         <script>
 
@@ -548,6 +557,28 @@
 
                 }
             }
+
+            function updateAdTime(){
+                let timeElem = document.getElementById('ad-time');
+                let video = document.getElementById('ad-video');
+
+                // put time left into the element
+
+                let timeLeft = video.duration - video.currentTime;
+
+                let minutes = Math.floor(timeLeft / 60);
+
+                let seconds = Math.floor(timeLeft % 60);
+
+                timeElem.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+            }
+
+            setInterval(() => {
+                if(stage == "ad"){
+                    updateAdTime();
+                }
+            }, 300);
 
             function onVideoEnd(){
                 setStage("full-screen");
