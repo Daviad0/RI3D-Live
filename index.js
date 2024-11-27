@@ -33,11 +33,11 @@ app.get(route + '/stream', (req, res) => {
 });
 
 let streamState = {
-    time_target: "2021-01-01T00:00",
-    build_stage: "Build Stage",
-    stream_view: "Timer",
-    data_name: "Data Name",
-    data_segment: "Hidden",
+    time_target: "2025-01-01T00:00",
+    build_stage: "Initial",
+    stream_view: "timer",
+    data_name: "Data:",
+    data_segment: "hidden",
     scrolling_text: "Scrolling Text"
 }
 
