@@ -32,19 +32,25 @@ app.get(route + '/stream', (req, res) => {
     res.sendFile(__dirname + '/views/stream.html');
 });
 
+app.get(route + '/status', (req, res) => {
+    res.sendFile(__dirname + '/views/status.html');
+});
+
 let streamState = {
     time_target: "2025-01-01T00:00",
     build_stage: "Initial",
     stream_view: "timer",
     data_name: "Data:",
     data_segment: "hidden",
-    scrolling_text: "Scrolling Text"
+    scrolling_text: "Scrolling Text",
+    full_screen_message: "Full Screen Message",
 }
 
 let dataState = {
     counter: 28,
     points: 0,
-    timer: "0:00"
+    timer: "0:00",
+    time_pinged: Date.now()
 }
 
 

@@ -35,8 +35,7 @@ body{
 
     width: 80%;
     max-width: 1000px;
-    height: 60%;
-    max-height: 600px;
+    min-height: 600px;
 
     padding: 20px;
     border-radius: 20px;
@@ -145,6 +144,7 @@ span.selected{
     border-radius: 40px;
     color: rgb(42, 42, 42);
     transition: all 0.5s ease;
+    
 }
 
 .ping.recent{
@@ -154,5 +154,22 @@ span.selected{
 
 .ping.dead{
     background-color: red;
+    color: white;
+}
+
+.switch-page{
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.switch-page button{
+    background-color: black;
+    font-size: 2em;
+    border:none;
+    margin: 0px 20px;
+    border-radius: 10px 10px 0px 0px;
+    padding: 10px 20px;
     color: white;
 }

@@ -7,63 +7,77 @@
     <body>
         <div class="middle-container" id="container">
             <div class="flex-center">
-                <span class="title bold">RI3D Stream Controller</span>
+                <span class="title bold">RI3D Stream Status</span>
             </div>
 
             <div class="options">
                 <div class="flex-apart">
                     <span class="bold">Time Target</span>
-                    <input type="datetime-local" id="time-target" onchange="triggerUpdate('time-target', this)" class="input" value="0">
+                    <input type="datetime-local" disabled id="time-target" class="input" value="0">
                 </div>
                 <div class="flex-apart">
                     <span class="bold">Build Stage</span>
-                    <input type="text" id="build-stage" onchange="triggerUpdate('build-stage', this)" class="input" maxlength="40">
+                    <input type="text" disabled id="build-stage" class="input" maxlength="40">
                 </div>
                 
                 <div class="flex-apart">
                     <span class="bold">Stream View</span>
                     <div id="stream-view" class="flex-center">
-                        <button onclick="triggerUpdate('stream-view', this)" name="timer" class="selected">Timer</button>
-                        <button onclick="triggerUpdate('stream-view', this)" name="away" class="">Away</button>
-                        <button onclick="triggerUpdate('stream-view', this)" name="hide" class="">Hide</button>
-                        <button onclick="triggerUpdate('stream-view', this)" name="ad" class="">Ad Break</button>
-                        <button onclick="triggerUpdate('stream-view', this)" name="webcam" class="">Webcam</button>
+                        <button name="timer" class="selected">Timer</button>
+                        <button name="away" class="">Away</button>
+                        <button name="hide" class="">Hide</button>
+                        <button name="ad" class="">Ad Break</button>
+                        <button name="webcam" class="">Webcam</button>
                     </div>
                 </div>
                 <div class="flex-apart">
                     <span class="bold">Data Name</span>
                     <div class="ping">Recent</div>
-                    <input id="data-name" type="text" onchange="triggerUpdate('data-name', this)" class="input" maxlength="40">
+                    <input id="data-name" type="text" disabled class="input" maxlength="40">
                 </div>
                 <div class="flex-apart">
                     <span class="bold">Data Segment</span>
                     <div class="flex-center" id="data-segment">
-                        <button onclick="triggerUpdate('data-segment', this)" name="hidden" class="selected">Hidden</button>
-                        <button onclick="triggerUpdate('data-segment', this)" name="timer" class="">Timer</button>
-                        <button onclick="triggerUpdate('data-segment', this)" name="counter" class="">Counter</button>
-                        <button onclick="triggerUpdate('data-segment', this)" name="points" class="">Points</button>
+                        <button name="hidden" class="selected">Hidden</button>
+                        <button name="timer" class="">Timer</button>
+                        <button name="counter" class="">Counter</button>
+                        <button name="points" class="">Points</button>
                     </div>
                 </div>
                 <div class="flex-apart">
                     <span class="bold">Scrolling Text</span>
-                    <textarea id="scrolling-text"  onchange="triggerUpdate('scrolling-text', this)"></textarea>
+                    <textarea id="scrolling-text" disabled></textarea>
                 </div>
                 <div class="flex-apart">
                     <span class="bold">Hide Message</span>
-                    <input type="text" id="full-screen-message" onchange="triggerUpdate('full-screen-message', this)" class="input">
+                    <input type="text" id="full-screen-message" disabled class="input">
+                </div>
+                <br/>
+                <div>
+                    <div class="flex-center">
+                        <span class="bold">Current Data Points</span>
+                    </div>
+                    <div class="flex-center" style="margin: 30px 0px">
+                        <div style="flex: 1">
+                            <span class="bold" style="display:block">Counter</span>
+                            <span id="counter-count" style="font-size: 3em" class="bold">0</span>
+                        </div>
+                        <div style="flex: 1">
+                            <span class="bold" style="display:block">Points</span>
+                            <span id="counter-points" style="font-size: 3em" class="bold">0pts</span>
+                        </div>
+                        <div style="flex: 1">
+                            <span class="bold" style="display:block">Timer</span>
+                            <span id="counter-timer" style="font-size: 3em" class="bold">0:00</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="flex-apart">
-                <div></div>
-                <div class="flex-center">
-                    <span id="not-saved" style="margin-right:10px"><i>Changes Not Saved</i></span>
-                    <button class="selected" onclick="publishToStream()">Publish to Stream</button>
-                </div>
-            </div>
+
         </div>
         <div class="switch-page">
+            <button onclick="window.location = 'control'">To Stream Control</button>
             <button onclick="window.location = 'data-control'">To Data Control</button>
-            <button onclick="window.location = 'status'">To Status Page</button>
         </div>
         <script>
 
@@ -89,77 +103,9 @@
                 full_screen_message: "Full Screen Message"
             }
 
-            function publishToStream(){
-                console.log("Publishing to Stream");
-                socket.emit('new-stream-state', data_obj);
+            
 
-                saved_data_obj = data_obj;
-
-                document.getElementById("not-saved").style.display = "none";
-            }
-
-            function triggerUpdate(name, ref){
-
-                let button_div = null;
-                let buttons = null;
-
-                switch(name){
-                    case "time-target":
-                        data_obj.time_target = document.getElementById(name).value;
-                        break;
-                    case "build-stage":
-                        data_obj.build_stage = document.getElementById(name).value;
-                        break;
-                    case "stream-view":
-                        // data_obj.stream_view = document.getElementById(name).value;
-
-                        button_div = document.getElementById(name);
-                        buttons = button_div.getElementsByTagName("button");
-
-                        for(let i = 0; i < buttons.length; i++){
-                            if(buttons[i].classList.contains("selected")){
-                                buttons[i].classList.remove("selected");
-                            }
-                        }
-
-                        ref.classList.add("selected");
-
-                        data_obj.stream_view = ref.getAttribute("name");
-
-                        break;
-                    case "data-name":
-                        data_obj.data_name = document.getElementById(name).value;
-                        break;
-                    case "data-segment":
-                        // data_obj.data_segment = document.getElementById(name).value;
-
-                        button_div = document.getElementById(name);
-                        buttons = button_div.getElementsByTagName("button");
-
-                        for(let i = 0; i < buttons.length; i++){
-                            if(buttons[i].classList.contains("selected")){
-                                buttons[i].classList.remove("selected");
-                            }
-                        }
-
-                        ref.classList.add("selected");
-
-                        data_obj.data_segment = ref.getAttribute("name");
-
-
-                        break;
-                    case "scrolling-text":
-                        data_obj.scrolling_text = document.getElementById(name).value;
-                        break;
-
-                    case "full-screen-message":
-                        data_obj.full_screen_message = document.getElementById(name).value;
-                        break;
-                }
-
-                document.getElementById("not-saved").style.display = "";
-            }
-
+        
             
 
             socket.on('connect', () => {
@@ -216,14 +162,18 @@
 
                 document.getElementById("full-screen-message").value = data.full_screen_message;
 
-
-                document.getElementById("not-saved").style.display = "none";
-
-
                 console.log('Stream State:', data);
             });
 
             socket.on('data-state', (dataPassed) => {
+                let counter = dataPassed.counter;
+                let points = dataPassed.points;
+                let timer = dataPassed.timer;
+
+                document.getElementById('counter-count').innerText = counter;
+                document.getElementById('counter-points').innerText = points + "pts";
+                document.getElementById('counter-timer').innerText = timer;
+
                 let timeLastPinged = dataPassed.time_pinged;
                 // format in HH:MM:SS
                 timeLastPinged = new Date(timeLastPinged).toLocaleTimeString();

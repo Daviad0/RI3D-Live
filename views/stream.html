@@ -311,6 +311,21 @@
                 object-fit: cover;
             }
 
+            .full-screen-message{
+                position: absolute;
+                top: 80%;
+                left: 50%;
+                transform: translateX(-50%);
+
+                
+            }
+
+            .full-screen-message span{
+                font-size: 3em;
+                color: black;
+                font-weight: bold;
+            }
+
         </style>
 
         <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
@@ -389,6 +404,10 @@
             
         </div>
 
+        <div class="full-screen-message">
+            <span id="full-screen-message">askdaksdkjasdjk</span>
+        </div>
+
         <div id="ad-view" class="ad">
             <span class="time" id="ad-time">0s</span>
             <span class="statement">We'll Be Right Back...</span>
@@ -445,12 +464,13 @@
             ]
 
             let full_screen_specific_classes = [
-                "full-screen-logos"
+                "full-screen-logos",
+                "full-screen-message"
             ]
 
             let ad_specific_classes = [
                 "ad",
-                "full-screen-logos"
+                "full-screen-logos",
             ]
 
             let webcam_specific_classes = [
@@ -740,6 +760,8 @@
                 let build_stage = stream_state["build_stage"];
                 document.getElementById('build-stage').getElementsByTagName('span')[0].innerText = `Build Stage: ${build_stage}`;
 
+                let full_screen_message = stream_state["full_screen_message"];
+                document.getElementById('full-screen-message').innerText = full_screen_message;
 
             }
 

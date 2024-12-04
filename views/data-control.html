@@ -61,6 +61,10 @@
                 </div>
             </div>
         </div>
+        <div class="switch-page">
+            <button onclick="window.location = 'control'">To Stream Control</button>
+            <button onclick="window.location = 'status'">To Status Page</button>
+        </div>
         <script>
             const socket = io('', {path: '/live/socket.io'});
             let timerState = {
@@ -157,7 +161,8 @@
                 let new_data = {
                     timer: document.getElementById('timer-time').innerText,
                     counter: counterState,
-                    points: pointsState
+                    points: pointsState,
+                    time_pinged: Date.now()
                 };
 
                 socket.emit('new-data-state', new_data);
