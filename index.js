@@ -36,6 +36,10 @@ app.get(route + '/status', (req, res) => {
     res.sendFile(__dirname + '/views/status.html');
 });
 
+app.get(route + '/tech', (req, res) => {
+    res.sendFile(__dirname + '/views/tech.html');
+});
+
 let streamState = {
     time_target: "2025-01-01T00:00",
     build_stage: "Initial",

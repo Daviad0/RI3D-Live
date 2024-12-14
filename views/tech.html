@@ -1,0 +1,385 @@
+<html></html>
+    <head>
+        <style>
+            @font-face {
+                font-family: 'Cooper Hewitt';
+                src: url('public/CooperHewitt-Bold.ttf');
+            }
+
+            @font-face {
+                font-family: 'Avenir Next';
+                font-weight: 500;
+                src: url('public/AvenirNextLTPro-Regular.otf');
+            }
+
+            @font-face {
+                font-family: 'Avenir Next';
+                font-weight: 700;
+                src: url('public/AvenirNextLTPro-Bold.otf');
+            }
+
+            *{
+                transition: all 0.5s ease;
+            }
+
+            body{
+                overflow: hidden;
+            }
+
+            span{
+                font-family: 'Avenir Next';
+                display:block;
+                margin: 0;
+                line-height: 90%;
+            }
+
+            .flex-center{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .time-left-container{
+                position: absolute;
+                bottom: 30px;
+                right: 30px;
+            }
+
+            .top-bar-mtu-apply{
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                color: black;
+                font-size: 28px;
+            }
+
+            .bottom-bar-mtu-logo{
+                position: absolute;
+                bottom: 2%;
+                left: 30px;
+                color: black;
+                height: 7%;
+            }
+
+            .top-bar-image{
+                position: absolute;
+                top: -20px;
+                left: -20px;
+                width: calc(100% + 40px);
+            }
+
+            .bottom-bar-image{
+                position: absolute;
+                bottom: -20px;
+                left: -20px;
+                width: calc(100% + 40px);
+            }
+
+            .time-left{
+                color: white;
+                font-size: 120px;
+                
+                text-shadow: -2px 2px 0 #000,
+                         2px 2px 0 #000,
+                         2px -2px 0 #000,
+                         -2px -2px 0 #000;
+                text-align:right;
+            }
+
+            .time-left-label{
+                font-size: 40px;
+                color: black;
+                text-align:right;
+            }
+
+            .clock-image{
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                max-width:10%;
+            }
+
+            .timer-sprawl{
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
+
+            .gracious-support{
+                height: 15%;
+                width: 31%;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+
+                text-align: center;
+            }
+
+            .timer-block{
+                width: 18%;
+                height: 17%;
+                /* background-color: red; */
+                position: absolute;
+                top: 0;
+                right: 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+
+                text-align: center;
+
+            }
+
+            .timer-block .time{
+                font-size: 4em;
+                color: black;
+                font-weight: 700;
+            }
+
+            .timer-block .left{
+                font-size: 2em;
+                color: black;
+                text-align: right;
+                font-weight: 700;
+                margin-right: 10px;
+                margin-top:4px;
+            }
+            .college-logo{
+                width: 280px;
+                margin: 15px;
+                margin-top:20px;
+            }
+
+            .ccr-logo{
+                width: 300px;
+                margin: 15px;
+            }
+
+            .data-segment{
+                width: 27%;
+                height: 5%;
+                /* background-color: red; */
+                position: absolute;
+                bottom: 10%;
+                right: 30%;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+
+                text-align: center;
+
+                transition: all 0.5s ease;
+            }
+
+            .scrolling-data{
+                width: 50%;
+                height: 9%;
+                /* background-color: red; */
+                position: absolute;
+                bottom:1%;
+                left: 16%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+       
+
+
+            .scrolling-data span{
+                color: white;
+                font-size: 1.7em;
+                font-weight: 500;
+            }
+
+            .data-segment span{
+                color: black;
+                font-size: 1.7em;
+                font-weight: 700;
+            }
+
+            .full-screen-image{
+                min-width: 100%;
+                min-height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                max-width: 120%;
+
+            }
+
+            .top-waiting-bar{
+                background-color: rgba(0,0,0,0.7);
+                height: 22%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+
+            .full-screen-logos{
+                background-image: url('public/BackgroundControl.png');
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .full-screen-container{
+                background-color: white;
+                padding: 10px 80px;
+                border-radius: 60px;
+            }
+
+            .full-screen-logos img{
+                width: 400px;
+                margin: 40px;
+            }
+
+            .expand-support{
+                position: absolute;
+                overflow: hidden;
+                transition: all 0.75s ease;
+                opacity: 0;
+            }
+
+            .expand-support.expanded{
+                opacity: 1;
+            }
+
+            .ad{
+
+            }
+
+            .ad .statement{
+                position: absolute;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+
+                font-size: 3em;
+                color: black;
+                font-weight: bold;
+            }
+
+            .ad .time{
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                font-size: 2em;
+                color: black;
+            }
+           
+            .ad video{
+                position: absolute;
+                top: 5%;
+                left: 10%;
+                width: 80%;
+
+                border-radius: 20px;
+
+                transition: all 0.5s ease;
+
+            }
+
+            .webcam video{
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+
+                object-fit: cover;
+            }
+
+            .full-screen-message{
+                position: absolute;
+                top: 80%;
+                left: 50%;
+                transform: translateX(-50%);
+
+                
+            }
+
+            .full-screen-message span{
+                font-size: 3em;
+                color: black;
+                font-weight: bold;
+            }
+
+        </style>
+
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    </head>
+
+    
+        <img src="public/TopBar.png" class="top-bar-image">
+
+        <div class="timer-block">
+            <div class="flex-center" style="align-items: end;">
+                <span class="time" id="time">12:00:00</span>
+                <span class="left" style="margin-bottom: 5px;margin-left:5px" id="amorpm">PM</span>
+            </div>
+            
+        </div>
+        
+        <script>
+
+            const socket = io('', {path: '/live/socket.io'});
+
+            let stream_state = {};
+
+            function updateCurrentTime(){
+
+                let date = new Date();
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+
+                let amorpm = hours >= 12 ? "PM" : "AM";
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                document.getElementById('time').innerText = `${hours}:${minutes}:${seconds}`;
+                document.getElementById('amorpm').innerText = amorpm;
+
+            }
+
+            setInterval(() => {
+                updateCurrentTime();
+
+            }, 300)
+
+            
+
+            
+
+            socket.on('connect', () => {
+                console.log("Connected to server");
+            });
+
+            
+        </script>
+    </body>
+</html>
