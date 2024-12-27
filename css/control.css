@@ -84,6 +84,40 @@ body{
 
 }
 
+.document{
+    margin: 5px 0px;
+}
+
+.align-end{
+    align-items: end
+}
+
+.flex-1{
+    flex: 1;
+    margin: 0px 5px;
+}
+
+.flex-2{
+    flex: 2;
+    margin: 0px 5px;
+}
+
+label{
+    text-align: left;
+    font-size: .8em;
+    display: block;
+    margin-left: 10px;
+}
+
+.expand-x{
+    width: 100%;
+}
+
+input.expand-x{
+    display: block;
+    margin-left: 0px;
+}
+
 input{
     background-color: white;
     color: rgb(42, 42, 42);
@@ -162,6 +196,7 @@ span.selected{
     bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
+    width: 100%;
 }
 
 .switch-page button{
@@ -172,4 +207,9 @@ span.selected{
     border-radius: 10px 10px 0px 0px;
     padding: 10px 20px;
     color: white;
+}
+
+.documents{
+    max-height: 400px;
+    overflow-y: auto;
 }

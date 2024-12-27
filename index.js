@@ -11,6 +11,7 @@ const socketio = require('socket.io');
 
 const app = express();
 const server = require('http').createServer(app);
+const fs = require('fs');
 
 const io = socketio(server, {path: '/live/socket.io'});
 
@@ -40,6 +41,10 @@ app.get(route + '/tech', (req, res) => {
     res.sendFile(__dirname + '/views/tech.html');
 });
 
+app.get(route + '/materials', (req, res) => {
+    res.sendFile(__dirname + '/views/materials.html');
+});
+
 let streamState = {
     time_target: "2025-01-01T00:00",
     build_stage: "Initial",
@@ -58,10 +63,38 @@ let dataState = {
 }
 
 
+let materials = [];
+
+async function getMaterials(){
+    // get from the file in the public folder
+    try{
+        let data = fs.readFileSync('public/materials.json');
+        materials = JSON.parse(data);
+        materials = materials.materials;
+    }catch(e){
+        materials = [];
+    }
+
+    
+}
+
+async function writeMaterials(){
+    let data = JSON.stringify({materials: materials});
+    fs.writeFileSync('public/materials.json', data);
+}
+
+getMaterials();
+
+app.get(route + '/get-materials', (req, res) => {
+    res.send({documents: materials});
+});
+
+
 io.on('connection', (socket) => {
 
     socket.emit('stream-state', streamState);
     socket.emit('data-state', dataState);
+    socket.emit('material-write', materials);
 
     console.log('New connection');
     socket.on('control', (data) => {
@@ -78,6 +111,12 @@ io.on('connection', (socket) => {
     socket.on('new-data-state', (data) => {
         dataState = data;
         io.emit('data-state', dataState);
+    });
+
+    socket.on('material-write', (data) => {
+        materials = data;
+        writeMaterials();
+        io.emit('new-material-write', data);
     });
 });
 
