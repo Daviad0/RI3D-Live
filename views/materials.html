@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <title>RI3D at MTU Control</title>
+        <link rel="stylesheet" type="text/css" href="css/control.css">
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    </head>
+    <body>
+        <div class="middle-container" id="container">
+            <div class="flex-center">
+                <span class="title bold">RI3D Public Materials</span>
+            </div>
+
+            <div class="options">
+                <div class="documents">
+                    
+                </div>
+                <div class="flex-apart">
+                    <div></div>
+                    <button onclick="addDocument()">Add Document</button>
+                </div>
+                
+
+            </div>
+            <div class="flex-apart">
+                <div></div>
+                <div class="flex-center">
+                    <span id="not-saved" style="margin-right:10px"><i>Changes Not Saved</i></span>
+                    <button class="selected" onclick="publishToStream()">Publish to Stream</button>
+                </div>
+            </div>
+        </div>
+        <div class="switch-page">
+            <button onclick="window.location = 'data-control'">To Data Control</button>
+            <button onclick="window.location = 'status'">To Status Page</button>
+            <button onclick="window.location = 'control'">To Control Page</button>
+        </div>
+        <script>
+
+            const socket = io('', {path: '/live/socket.io'});
+
+            function generateUUID() {
+                return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0,
+                        v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            let documents = [];
+
+            function initialData(){
+
+            }
+
+            function addDocument(){
+                let document = {
+                    id: generateUUID(),
+                    type: '',
+                    name: '',
+                    link: ''
+                }
+                documents.push(document);
+
+                renderDocument(document);
+                
+            }
+
+            function removeDocument(id){
+                documents = documents.filter(doc => doc.id !== id);
+                document.querySelector(`.document[data-id="${id}"]`).remove();
+            }
+
+            function renderDocument(doc){
+                let documentsDiv = document.querySelector('.documents');
+
+                let documentDiv = document.createElement('div');
+                documentDiv.classList.add('flex-apart', 'align-end', 'document');
+                documentDiv.setAttribute('data-id', doc.id);
+
+                documentDiv.innerHTML = `
+                <div class="flex-1">
+                    <label class="bold">Document Type</label>
+                    <input type="text" name="type" onchange="editDocument('${doc.id}', 'type')" class="input expand-x" value="${doc.type}" placeholder="Design Programming">
+                </div>
+                <div class="flex-1">
+                    <label class="bold">Document Name</label>
+                    <input type="text" name="name" onchange="editDocument('${doc.id}', 'name')" class="input expand-x" value="${doc.name}" placeholder="Public Document">
+                </div>
+                <div class="flex-2">
+                    <label class="bold">Document Link</label>
+                    <input type="text" name="link" onchange="editDocument('${doc.id}', 'link')" class="input expand-x" value="${doc.link}" placeholder="Design Programming">
+                </div>
+                <div>
+                    <button class="selected" onclick="removeDocument('${doc.id}')">Remove</button>
+                </div>
+                `
+
+                documentsDiv.appendChild(documentDiv);
+            }
+
+            function editDocument(id, key){
+                let doc = documents.find(doc => doc.id === id);
+                let input = document.querySelector(`.document[data-id="${id}"] input[name="${key}"]`);
+                doc[key] = input.value;
+                document.querySelector('#not-saved').style.display = 'inline';
+            }
+
+            function publishToStream(){
+                socket.emit('material-write', documents);
+                document.querySelector('#not-saved').style.display = 'none';
+            }
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+
+                document.getElementById("container").classList.add("connected");
+                document.getElementById("container").classList.remove("disconnected");
+                
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+
+                document.getElementById("container").classList.add("disconnected");
+                document.getElementById("container").classList.remove("connected");
+            });
+
+            socket.on('material-write', (materials) => {
+                documents = materials;
+                document.querySelector('.documents').innerHTML = '';
+                documents.forEach(doc => {
+                    renderDocument(doc);
+                });
+            });
+
+
+        </script>
+    </body>
+</html>
