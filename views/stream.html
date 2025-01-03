@@ -381,6 +381,7 @@
                 <div class="flex-center">
                     <img src="public/KOOPSSponsor.png" class="sponsor-logo">
                     <img src="public/SCSSponsor.png" class="sponsor-logo">
+                    <img src="public/PreferredMachine.png" class="sponsor-logo">
                 </div>
             </div>
             <div class="expand-support" id="sponsors3">
@@ -389,6 +390,11 @@
                     <img src="public/alleysponsor.png" class="sponsor-logo">
                     <img src="public/reduxsponsor.png" class="sponsor-logo">
                 </div>
+            </div>
+
+            <div class="expand-support" id="email-us">
+                <span style="color:white; font-size: 2.5em;font-weight: 700;margin:10px 0px">ccr-contact@mtu.edu</span>
+                <span style="color:white; font-size: 2.5em;font-weight: 700;margin:10px 0px">ccr.students.mtu.edu/ri3d</span>
             </div>
 
 
@@ -508,6 +514,8 @@
                     document.getElementById('sponsors1').classList.remove('expanded');
                     
                     document.getElementById('sponsors2').classList.add('expanded');
+                    document.getElementById('sponsors3').classList.remove('expanded');
+                    document.getElementById('email-us').classList.remove('expanded');
                     document.getElementById('hosts').classList.remove('expanded');
                     document.getElementById('build-stage').classList.remove('expanded');
                     current_support_panel = "sponsors2";
@@ -516,6 +524,7 @@
                     document.getElementById('sponsors2').classList.remove('expanded');
                     document.getElementById('sponsors3').classList.add('expanded');
                     document.getElementById('sponsors1').classList.remove('expanded');
+                    document.getElementById('email-us').classList.remove('expanded');
                     document.getElementById('hosts').classList.remove('expanded');
                     document.getElementById('build-stage').classList.remove('expanded');
                     current_support_panel = "sponsors3";
@@ -524,6 +533,16 @@
                     document.getElementById('sponsors2').classList.remove('expanded');
                     document.getElementById('sponsors1').classList.remove('expanded');
                     document.getElementById('sponsors3').classList.remove('expanded');
+                    document.getElementById('email-us').classList.add('expanded');
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "email-us";
+                }
+                else if(current_support_panel == "email-us"){
+                    document.getElementById('sponsors1').classList.remove('expanded');
+                    document.getElementById('sponsors3').classList.remove('expanded');
+                    document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('email-us').classList.remove('expanded');
                     document.getElementById('hosts').classList.add('expanded');
                     document.getElementById('build-stage').classList.remove('expanded');
                     current_support_panel = "hosts";
@@ -532,6 +551,7 @@
                     document.getElementById('sponsors1').classList.remove('expanded');
                     document.getElementById('sponsors3').classList.remove('expanded');
                     document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('email-us').classList.remove('expanded');
                     document.getElementById('hosts').classList.remove('expanded');
                     document.getElementById('build-stage').classList.add('expanded');
                     current_support_panel = "build-stage";
@@ -540,6 +560,7 @@
                     document.getElementById('sponsors1').classList.add('expanded');
                     document.getElementById('sponsors3').classList.remove('expanded');
                     document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('email-us').classList.remove('expanded');
                     document.getElementById('hosts').classList.remove('expanded');
                     document.getElementById('build-stage').classList.remove('expanded');
                     current_support_panel = "sponsors1";
