@@ -157,6 +157,12 @@
                 margin-top:20px;
             }
 
+            .sponsor-logo{
+                width: 140px;
+                margin: 15px;
+                margin-top: 20px;
+            }
+
             .ccr-logo{
                 width: 300px;
                 margin: 15px;
@@ -363,13 +369,28 @@
             
         </div>
         <div class="gracious-support">
-            <div class="expand-support expanded" id="sponsors">
+            <div class="expand-support expanded" id="sponsors1">
                 <span style="color:white; font-size: 2em;margin-top:20px;text-decoration: underline;">Graciously Supported By</span>
                 <div class="flex-center">
                     <img src="public/computing[mtu]-white.png" class="college-logo">
                     <img src="public/MTUeng_white.png" class="college-logo">
                 </div>
             </div>
+            <div class="expand-support" id="sponsors2">
+                <span style="color:white; font-size: 2em;margin-top:20px;text-decoration: underline;">Graciously Supported By</span>
+                <div class="flex-center">
+                    <img src="public/KOOPSSponsor.png" class="sponsor-logo">
+                    <img src="public/SCSSponsor.png" class="sponsor-logo">
+                </div>
+            </div>
+            <div class="expand-support" id="sponsors3">
+                <span style="color:white; font-size: 2em;margin-top:20px;text-decoration: underline;">Graciously Supported By</span>
+                <div class="flex-center">
+                    <img src="public/alleysponsor.png" class="sponsor-logo">
+                    <img src="public/reduxsponsor.png" class="sponsor-logo">
+                </div>
+            </div>
+
 
             <div class="expand-support" id="hosts">
                 <img src="public/CCRAtMTU.png" class="ccr-logo">
@@ -419,7 +440,7 @@
 
             let stream_state = {};
 
-            let current_support_panel = "sponsors";
+            let current_support_panel = "sponsors1";
 
             let data_segment_name = "Scots Scored:";
 
@@ -483,22 +504,47 @@
             ]
 
             function changeStage(){
-                if(current_support_panel == "sponsors"){
-                    document.getElementById('sponsors').classList.remove('expanded');
+                if(current_support_panel == "sponsors1"){
+                    document.getElementById('sponsors1').classList.remove('expanded');
+                    
+                    document.getElementById('sponsors2').classList.add('expanded');
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "sponsors2";
+                }
+                else if(current_support_panel == "sponsors2"){
+                    document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('sponsors3').classList.add('expanded');
+                    document.getElementById('sponsors1').classList.remove('expanded');
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "sponsors3";
+                }
+                else if(current_support_panel == "sponsors3"){
+                    document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('sponsors1').classList.remove('expanded');
+                    document.getElementById('sponsors3').classList.remove('expanded');
                     document.getElementById('hosts').classList.add('expanded');
                     document.getElementById('build-stage').classList.remove('expanded');
                     current_support_panel = "hosts";
-                }else if(current_support_panel == "hosts"){
-                    document.getElementById('hosts').classList.remove('expanded');
-                    document.getElementById('sponsors').classList.add('expanded');
-                    document.getElementById('build-stage').classList.remove('expanded');
-                    current_support_panel = "build-stage";
-                }else if(current_support_panel == "build-stage"){
-                    document.getElementById('hosts').classList.remove('expanded');
-                    document.getElementById('sponsors').classList.remove('expanded');
-                    document.getElementById('build-stage').classList.add('expanded');
-                    current_support_panel = "sponsors";
                 }
+                else if(current_support_panel == "hosts"){
+                    document.getElementById('sponsors1').classList.remove('expanded');
+                    document.getElementById('sponsors3').classList.remove('expanded');
+                    document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.add('expanded');
+                    current_support_panel = "build-stage";
+                }
+                else if(current_support_panel == "build-stage"){
+                    document.getElementById('sponsors1').classList.add('expanded');
+                    document.getElementById('sponsors3').classList.remove('expanded');
+                    document.getElementById('sponsors2').classList.remove('expanded');
+                    document.getElementById('hosts').classList.remove('expanded');
+                    document.getElementById('build-stage').classList.remove('expanded');
+                    current_support_panel = "sponsors1";
+                }
+
             }
 
             setInterval(() => {
